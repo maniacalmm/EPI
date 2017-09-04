@@ -86,6 +86,11 @@ public class Ch4PrimitiveTypes {
     }
 
     /**************************************************************/
+    // Generate uniform random numbers;
+
+
+
+    /**************************************************************/
     public static void main(String[] args) {
         int input = 0b101000101011111;
         Ch4PrimitiveTypes sb = new Ch4PrimitiveTypes();

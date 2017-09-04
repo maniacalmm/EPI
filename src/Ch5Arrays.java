@@ -148,8 +148,105 @@ public class Ch5Arrays {
         return result;
     }
 
-/***************************************************/
+    /***************************************************/
+    public static boolean reached = false;
+    public static boolean advance(int[] game) {
+        advance(game, 0);
+        return reached;
+    }
 
+    private static void advance(int[] game, int position) {
+        if (position == game.length - 1) {
+            reached = true;
+            return;
+        }
+        for (int i = game[position]; i > 0; i--) {
+            advance(game, position + i);
+        }
+    }
+
+    public static boolean canReachEnd(List<Integer> maxAdvancedSteps) {
+        int furthestReachSoFar = 0, lastIndex = maxAdvancedSteps.size() - 1;
+        for (int i = 0; i <= furthestReachSoFar && furthestReachSoFar < lastIndex; i++) {
+            // i <= furthestReachSoFar --> this line is important
+            furthestReachSoFar = Math.max(furthestReachSoFar, i + maxAdvancedSteps.get(i));
+            // furthest point can be reach from any point is i + maxAdvancedSteps.get(i)
+        }
+
+        return furthestReachSoFar == lastIndex;
+    }
+    /***************************************************/
+    public static int deleteDuplicates(List<Integer> A) {
+        if (A.isEmpty()) return 0;
+
+        int writeIndex = 1;
+        for (int i = 1; i < A.size() - 1; i++) {
+            if (!A.get(writeIndex - 1).equals(A.get(i)))
+                A.set(writeIndex++, A.get(i));
+        }
+
+        return writeIndex;
+    }
+
+    /***************************************************/
+    public static double computeMaxProfit(List<Double> prices) {
+        double maxProfit = 0, minPrice = Double.POSITIVE_INFINITY;
+
+        for (double price : prices) {
+            maxProfit = Math.max(maxProfit, price - minPrice);
+            minPrice = Math.min(minPrice, price);
+        }
+
+        return maxProfit;
+    }
+
+    public static int findLongestSubarray(List<Integer> A) {
+        int longest = 0;
+        int id = 0;
+        int start = id;
+        for (int i = 1; i < A.size(); i++) {
+            if (A.get(i) != A.get(i - 1)) {
+                longest = Math.max(longest, i - start);
+                start = i;
+            }
+
+            if (i == A.size() - 1) {
+                //System.out.println(i + " " + start);
+                longest = Math.max(longest, i - start + 1);
+            }
+        }
+        return longest;
+    }
+
+    public static void rearrage(List<Integer> A) {
+        for (int i = 0; i < A.size(); i++) {
+            if ((i % 2 == 0 &&  A.get(i - 1) < A.get(i)
+                    || (i % 2) != 0 && A.get(i - 1) > A.get(i)))
+                Collections.swap(A, i - 1, i);
+        }
+    }
+
+    public static List<Integer> generatePrimes(int n) {
+        List<Integer> primes = new ArrayList<>();
+        List<Boolean> isPrime = new ArrayList<>(Collections.nCopies(n + 1, true));
+
+        isPrime.set(0, false);
+        isPrime.set(1, false);
+
+        for (int p = 2; p <= n; p++) {
+            if (isPrime.get(p)) {
+                primes.add(p);
+
+                for (int i = p; i < n; i += p) {
+                    isPrime.set(p, false);
+                }
+            }
+        }
+
+        return primes;
+    }
+
+    /***************************************************/
     public static void main(String[] args) {
         //List<Color> a = new ArrayList<>();
         //a.add(Color.BLUE);
@@ -157,6 +254,7 @@ public class Ch5Arrays {
         //a.add(Color.fuckingwhite);
         //System.out.println(binaryAdd("111111", "001"));
         //System.out.println();
+        /*
         Integer[] a = new Integer[] {1,2,3,4,5,6};
         Integer[] b = new Integer[] {6,5,4,3,2,1};
         List<Integer> A = Arrays.asList(a);
@@ -165,7 +263,10 @@ public class Ch5Arrays {
         for (int e : multiply(A, B))
             System.out.print(e);
         System.out.println();
+        */
 
+        Integer[] game = new Integer[] {1,1,1,1,2,1,2,2,2,2,2,2};
+        System.out.println(findLongestSubarray(Arrays.asList(game)));
 
     }
 
