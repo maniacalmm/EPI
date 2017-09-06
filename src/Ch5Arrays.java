@@ -246,6 +246,132 @@ public class Ch5Arrays {
         return primes;
     }
 
+    public static void applyPermutation(List<Integer> perm, List<Integer> A) {
+        for (int i = 0; i < perm.size(); i++) {
+            if (perm.get(i) < 0) continue;
+
+            int po = perm.get(i);
+            int currVal = A.get(i);
+            while(po >= 0) {
+                int nextVal = A.get(po);
+                int nextPo = perm.get(po);
+                A.set(po, currVal);
+                perm.set(po, -1);
+                currVal = nextVal;
+                po = nextPo;
+            }
+        }
+
+        for (int a : A)
+            System.out.print(a + " ");
+        System.out.println();
+    }
+
+    public static void applyPermuationBook(List<Integer> perm, List<Integer> A) {
+        for (int i = 0; i < A.size(); ++i) {
+            int next = i;
+            while(perm.get(next) > 0) {
+                Collections.swap(A, i, perm.get(next));
+                int tmp = perm.get(next);
+            }
+        }
+    }
+
+    public static List<Integer> nextPermutation(List<Integer> perm) {
+        int inversion_point = perm.size() - 2;
+        while(inversion_point >= 0
+                && perm.get(inversion_point) >= perm.get(inversion_point + 1))
+            inversion_point--;
+
+        if (inversion_point == -1) return Collections.emptyList();
+
+        for (int i = perm.size() - 1; i > inversion_point;  i--) {
+            if (perm.get(i) > perm.get(inversion_point)) {
+                Collections.swap(perm, inversion_point, i);
+                break;
+            }
+        }
+
+        Collections.reverse(perm.subList(inversion_point + 1, perm.size()));
+        return perm;
+    }
+
+    public static void randomSampling(int k, List<Integer> A) {
+        Random rand = new Random();
+        for (int i = 0; i < k; i++) {
+            Collections.swap(A, i, i + rand.nextInt(A.size() - i));
+        }
+    }
+
+    public static List<Integer> onlineRandomSample(Iterator<Integer> sequence, int k) {
+        List<Integer> runningSample = new ArrayList<>(k);
+
+        for (int i = 0; i < k && sequence.hasNext(); i++) {
+            runningSample.add(sequence.next());
+        }
+
+        int numSeenSoFar = k;
+        Random randIdxGen = new Random();
+        while(sequence.hasNext()) {
+            // core idea: replace one of the old element with the newly added one
+            Integer x = sequence.next();
+            numSeenSoFar++;
+            final int idxToReplace = randIdxGen.nextInt(numSeenSoFar);
+            if (idxToReplace < k) {
+                runningSample.set(idxToReplace, x);
+            }
+        }
+        return runningSample;
+    }
+
+    public static List<Integer> computeRandomPermuatation(int n) {
+        List<Integer> permutation = new ArrayList<>(n);
+        for (int i = 0; i < n; i++)
+            permutation.add(i);
+        Random rand = new Random();
+        for (int i = 0; i < n; i++) {
+            Collections.swap(permutation, i, rand.nextInt(n - i) + i);
+        }
+
+        return permutation;
+    }
+
+
+    public static List<Integer> randomSubset(int n, int k) {
+        /**
+         * By using a hashTable, we can get O(k) complexity, instead of O(n) during initial initalization
+         */
+        Map<Integer, Integer> changedElements = new HashMap<>();
+        Random rand = new Random();
+
+        for (int i = 0; i < k; i++) {
+            int toReplace = rand.nextInt(n - i) + i;
+            Integer p1 = changedElements.get(toReplace);
+            Integer p2 = changedElements.get(i);
+
+            if (p1 == null && p2 == null) {
+                changedElements.put(toReplace, i);
+                changedElements.put(i, toReplace);
+            } else if (p1 == null && p2 != null) {
+                changedElements.put(toReplace, p2);
+                changedElements.put(i, toReplace);
+            } else if (p1 != null && p2 == null) {
+                changedElements.put(i, p1);
+                changedElements.put(toReplace, i);
+            } else {
+                changedElements.put(i, p1);
+                changedElements.put(toReplace, p2);
+            }
+        }
+
+        List<Integer> result = new ArrayList<>(k);
+        for (int i = 0; i < k; i++) {
+            result.add(changedElements.get(i));
+        }
+
+        return result;
+    }
+
     /***************************************************/
     public static void main(String[] args) {
         //List<Color> a = new ArrayList<>();
@@ -265,8 +391,27 @@ public class Ch5Arrays {
         System.out.println();
         */
 
-        Integer[] game = new Integer[] {1,1,1,1,2,1,2,2,2,2,2,2};
-        System.out.println(findLongestSubarray(Arrays.asList(game)));
+        //Integer[] game = new Integer[] {1,1,1,1,2,1,2,2,2,2,2,2};
+        //System.out.println(findLongestSubarray(Arrays.asList(game)));
+
+        //applyPermutation(Arrays.asList(new Integer[] {2,0,1, 3}),
+        //        Arrays.asList(new Integer[] {1,2,3,4}));
+
+        /*
+        List<Integer> a = Arrays.asList(new Integer[] {0,1,2,3});
+        while (!a.isEmpty()) {
+            for (int b : a) {
+                System.out.print(b);
+            }
+            System.out.println();
+            a = nextPermutation(a);
+        }
+        */
+
+        for (int i = 0; i < 5; i++) {
+            List<Integer> l = computeRandomPermuatation(10);
+            System.out.println(l.toString());
+        }
 
     }
 

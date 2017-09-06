@@ -86,8 +86,31 @@ public class Ch4PrimitiveTypes {
     }
 
     /**************************************************************/
-    // Generate uniform random numbers;
+    public static class Rectangle {
+        int x, y, width, height;
 
+        public Rectangle(int x, int y, int width, int height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+
+        public static Rectangle intersectRectangle(Rectangle R1, Rectangle R2) {
+            if (!isIntersect(R1, R2))
+                return new Rectangle(0,0, -1, -1);
+            return new Rectangle(
+                    Math.max(R1.x, R2.x), Math.max(R1.y, R2.y),
+                    Math.min(R1.x + R1.width, R2.x + R2.width) - Math.max(R1.x, R2.x),
+                    Math.min(R1.y + R1.height, R2.y + R2.height) - Math.max(R1.y, R2.y));
+        }
+
+        public static boolean isIntersect(Rectangle r1, Rectangle r2) {
+            if (r1.x + r1.width <= r2.x || r2.x + r2.width <= r1.x) return false;
+            else if (r1.y + r1.height <= r2.y || r2.y + r2.height <= r1.y) return false;
+            else return true;
+        }
+    }
 
 
     /**************************************************************/
