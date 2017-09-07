@@ -160,6 +160,32 @@ public class Ch6Strings {
         return false;
     }
 
+    public static String reverseWords(char[] input) {
+        stringReverse(input, 0, input.length - 1);
+
+        int i = 0;
+        int j = 0;
+        while (j < input.length) {
+            if (input[j] == ' ') {
+                stringReverse(input, i, j - 1);
+                i = j + 1; j = i;
+            } else j++;
+        }
+
+        return Arrays.toString(input);
+    }
+
+
+    private static void stringReverse(char[] s, int i, int j) {
+        while (i < j) {
+           char tmp = s[i];
+           s[i] = s[j];
+           s[j] = tmp;
+           i++; j--;
+        }
+    }
+
+
     public static void main(String[] args) {
         String b = "12345";
         int a = 38472034;
@@ -179,8 +205,10 @@ public class Ch6Strings {
 
         //System.out.println(convertBase("615", 7, 13));
         //System.out.println(ssDecodeColID("ZZ"));
-        System.out.println(replaceAndRemoveBook(6, s));
+        //System.out.println(replaceAndRemoveBook(6, s));
 
-        System.out.println(isPalindrome("A man, a plan, a canal, Panama."));
+        //System.out.println(isPalindrome("A man, a plan, a canal, Panama."));
+        String input = "bob likes alice";
+        System.out.println(reverseWords(input.toCharArray()));
     }
 }
