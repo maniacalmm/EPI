@@ -249,7 +249,6 @@ public class Ch6Strings {
                 }
             }
         }
-
         return result;
     }
 
