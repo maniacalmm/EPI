@@ -6,7 +6,7 @@ public class Ch5Arrays {
         // the advantage of array is that we can efficiently operate from both ends
         final int BIT_MASK = 0xFFFF;
         int nextEven = 0, nextOdd = A.length - 1;
-        while(nextEven < nextOdd) {
+        while (nextEven < nextOdd) {
             if (A[nextEven] % 2 == 0)
                 nextEven++;
             else {
@@ -17,8 +17,12 @@ public class Ch5Arrays {
         }
     }
 
-/***************************************************/
-    public static enum Color {RED, BLACK, BLUE, fuckingwhite};
+    /***************************************************/
+    public static enum Color {
+        RED, BLACK, BLUE, fuckingwhite
+    }
+
+    ;
 
     public static void dutchFlagParition1(int pivotIndex, List<Color> A) {
         Color p = A.get(pivotIndex);
@@ -40,7 +44,7 @@ public class Ch5Arrays {
     public static void dutchFlagPartition2(int pivotIndex, List<Color> A) {
         int smaller = 0, equal = 0, larger = A.size();
         Color p = A.get(pivotIndex);
-        while(equal < larger) {
+        while (equal < larger) {
             if (A.get(equal).ordinal() < p.ordinal())
                 Collections.swap(A, smaller++, equal++);
             else if (A.get(equal).ordinal() > p.ordinal())
@@ -49,7 +53,7 @@ public class Ch5Arrays {
         }
     }
 
-/***************************************************/
+    /***************************************************/
     public static List<Integer> plusOne(List<Integer> A) {
         int n = A.size() - 1;
         A.set(n, A.get(n) + 1); // increase the LSB
@@ -114,7 +118,7 @@ public class Ch5Arrays {
     }
 
 
-/***************************************************/
+    /***************************************************/
     public static List<Integer> multiply(List<Integer> num1, List<Integer> num2) {
         final int sign = (num1.get(0) < 0) ^ (num2.get(0) < 0) ? -1 : 1;
         num1.set(0, Math.abs(num1.get(0)));
@@ -137,11 +141,11 @@ public class Ch5Arrays {
 
         // Remove the leading zeros;
         int firstNotZero = 0;
-        while(firstNotZero < result.size() && result.get(firstNotZero) == 0)
+        while (firstNotZero < result.size() && result.get(firstNotZero) == 0)
             firstNotZero++;
         result = result.subList(firstNotZero, result.size());
         if (result.isEmpty()) {
-            return  Arrays.asList(0);
+            return Arrays.asList(0);
         }
 
         result.set(0, result.get(0) * sign);
@@ -150,6 +154,7 @@ public class Ch5Arrays {
 
     /***************************************************/
     public static boolean reached = false;
+
     public static boolean advance(int[] game) {
         advance(game, 0);
         return reached;
@@ -175,6 +180,7 @@ public class Ch5Arrays {
 
         return furthestReachSoFar == lastIndex;
     }
+
     /***************************************************/
     public static int deleteDuplicates(List<Integer> A) {
         if (A.isEmpty()) return 0;
@@ -220,7 +226,7 @@ public class Ch5Arrays {
 
     public static void rearrage(List<Integer> A) {
         for (int i = 0; i < A.size(); i++) {
-            if ((i % 2 == 0 &&  A.get(i - 1) < A.get(i)
+            if ((i % 2 == 0 && A.get(i - 1) < A.get(i)
                     || (i % 2) != 0 && A.get(i - 1) > A.get(i)))
                 Collections.swap(A, i - 1, i);
         }
@@ -252,7 +258,7 @@ public class Ch5Arrays {
 
             int po = perm.get(i);
             int currVal = A.get(i);
-            while(po >= 0) {
+            while (po >= 0) {
                 int nextVal = A.get(po);
                 int nextPo = perm.get(po);
                 A.set(po, currVal);
@@ -270,7 +276,7 @@ public class Ch5Arrays {
     public static void applyPermuationBook(List<Integer> perm, List<Integer> A) {
         for (int i = 0; i < A.size(); ++i) {
             int next = i;
-            while(perm.get(next) > 0) {
+            while (perm.get(next) > 0) {
                 Collections.swap(A, i, perm.get(next));
                 int tmp = perm.get(next);
             }
@@ -279,13 +285,13 @@ public class Ch5Arrays {
 
     public static List<Integer> nextPermutation(List<Integer> perm) {
         int inversion_point = perm.size() - 2;
-        while(inversion_point >= 0
+        while (inversion_point >= 0
                 && perm.get(inversion_point) >= perm.get(inversion_point + 1))
             inversion_point--;
 
         if (inversion_point == -1) return Collections.emptyList();
 
-        for (int i = perm.size() - 1; i > inversion_point;  i--) {
+        for (int i = perm.size() - 1; i > inversion_point; i--) {
             if (perm.get(i) > perm.get(inversion_point)) {
                 Collections.swap(perm, inversion_point, i);
                 break;
@@ -312,7 +318,7 @@ public class Ch5Arrays {
 
         int numSeenSoFar = k;
         Random randIdxGen = new Random();
-        while(sequence.hasNext()) {
+        while (sequence.hasNext()) {
             // core idea: replace one of the old element with the newly added one
             Integer x = sequence.next();
             numSeenSoFar++;
@@ -372,6 +378,115 @@ public class Ch5Arrays {
         return result;
     }
 
+    public static int nonuniformRandomNumberGeneration(List<Integer> values, List<Double> probabilities) {
+        List<Double> prefixSumOfProbabilities = new ArrayList<>();
+        prefixSumOfProbabilities.add(0.0);
+
+        for (double p : probabilities)
+            prefixSumOfProbabilities.add(prefixSumOfProbabilities.get(prefixSumOfProbabilities.size() - 1) + p);
+        // above is the accumulation of probabilites and results a mapping relation to the items of that probability
+
+
+        Random rand = new Random();
+        final double unform1 = rand.nextDouble();
+
+        int it = Collections.binarySearch(prefixSumOfProbabilities, unform1);
+
+        if (it < 0) {
+            final int intervalIdx = (Math.abs(it) - 1) - 1;
+            return values.get(intervalIdx);
+        } else {
+            return values.get(it);
+        }
+    }
+
+    public static boolean isValidSudoku(List<List<Integer>> partialAssignment) {
+        for (int i = 0; i < partialAssignment.size(); i++) {
+            if (hasDuplicate(partialAssignment, i, i+1, 0, partialAssignment.size()))
+                return false;
+        }
+
+        for (int i = 0; i < partialAssignment.size(); i++) {
+            if (hasDuplicate(partialAssignment, 0, partialAssignment.size(), i, i + 1))
+                return false;
+        }
+
+        int regionSize = (int) Math.sqrt(partialAssignment.size());
+
+        // a little tricky to think about region checking, for small regions, we only need to check every
+        // element in one go, without having to check col and rows separately.
+        for (int i = 0; i < regionSize; i++) {
+            for (int j = 0; j < regionSize; j++) {
+                if (hasDuplicate(partialAssignment, regionSize * i, regionSize * (i + 1),
+                                                    regionSize * j, regionSize * (j + 1)));
+            }
+        }
+        return true;
+    }
+
+    private static boolean hasDuplicate(List<List<Integer>> partial, int startRow, int endRow, int startCol, int endCol) {
+        List<Boolean> isPresent = new ArrayList<>(Collections.nCopies(partial.size() + 1, false));
+
+        for (int i = startRow; i < endRow; i++) {
+            for (int j = startCol; j < endCol; j++) {
+                if (partial.get(i).get(j) != 0 && isPresent.get(partial.get(i).get(j)))
+                    return true;
+                isPresent.set(partial.get(i).get(j), true);
+            }
+        }
+        return false;
+    }
+
+    public static List<Integer> spiralOrder(List<List<Integer>> list) {
+        List<Integer> result = new ArrayList<>();
+        int i = 0, j = 0;
+
+        // traverse right
+        while(result.size() < list.size() * list.size()) {
+            while (j < list.size() && list.get(i).get(j) != -1) {
+                result.add(list.get(i).get(j));
+                list.get(i).set(j, -1);
+                j++;
+            }
+            j--;
+            i++;
+            System.out.println("right: " + i + j);
+            // traverse down
+            while (i < list.size() && list.get(i).get(j) != -1) {
+                result.add(list.get(i).get(j));
+                list.get(i).set(j, -1);
+                i++;
+            }
+            i--;
+            j--;
+            System.out.println("down: " + i + j);
+            // traverse left
+            while (j >= 0 && list.get(i).get(j) != -1) {
+                result.add(list.get(i).get(j));
+                list.get(i).set(j, -1);
+                j--;
+            }
+            j++;
+            i--;
+            System.out.println("left: " + i + j);
+            // traverse up
+            while (i >= 0 && list.get(i).get(j) != -1) {
+                result.add(list.get(i).get(j));
+                list.get(i).set(j, -1);
+                i--;
+            }
+            i++;
+            j++;
+            System.out.println("up: " + i + j);
+            //break;
+        }
+
+        return result;
+
+    }
+
+
+
     /***************************************************/
     public static void main(String[] args) {
         //List<Color> a = new ArrayList<>();
@@ -408,10 +523,28 @@ public class Ch5Arrays {
         }
         */
 
+        /*
         for (int i = 0; i < 5; i++) {
             List<Integer> l = computeRandomPermuatation(10);
             System.out.println(l.toString());
         }
+        */
+
+        List<List<Integer>> list = Arrays.asList(
+                Arrays.asList(1,2,3,4),
+                Arrays.asList(5,6,7,8),
+                Arrays.asList(9,10,11,12),
+                Arrays.asList(13,14,15,16));
+
+
+        List<List<Integer>> list1 = Arrays.asList(
+                Arrays.asList(1,2,3),
+                Arrays.asList(4,5,6),
+                Arrays.asList(7,8,9));
+
+        System.out.println(spiralOrder(list).toString());
+        System.out.println(spiralOrder(list1).toString());
+
 
     }
 

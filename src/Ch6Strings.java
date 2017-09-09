@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -186,7 +187,82 @@ public class Ch6Strings {
     }
 
 
+
+    public static List<String> phoneMnemonic(String digit) {
+        List<String> code = Arrays.asList("0", "1", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ");
+        List<String> result = new ArrayList<>();
+        PM(digit, "", code, result);
+        return result;
+    }
+
+    private static void PM(String digit, String acry, List<String> code, List<String> result) {
+        if (digit.length() == 0) {
+            result.add(acry);
+            return;
+        }
+        for (int i = 0; i < code.get(digit.charAt(0) - '0').length(); i++) {
+            PM(digit.substring(1), acry + code.get(digit.charAt(0) - '0').charAt(i), code, result);
+        }
+    }
+
+    public static String lookAnySay(int n) {
+        String result = "1";
+        for (int i = 0; i < n; i++) {
+            result = lookAnySayHelper(result);
+        }
+        return result;
+    }
+
+    private static String lookAnySayHelper(String x) {
+        String result = "";
+        int start = 0;
+        int end = 1;
+        while(end < x.length()) {
+            if (x.charAt(end) == x.charAt(end - 1)) {
+                end++;
+            } else {
+                result += Integer.toString(end - start) + x.charAt(end - 1);
+                start = end;
+                end++;
+            }
+        }
+        result += Integer.toString(end - start) + x.charAt(end - 1);
+        return result;
+    }
+
+    public static List<String> getValidAddress (String s) {
+        List<String> result = new ArrayList<>();
+
+        for (int i = 1; i < 4 && i < s.length(); i++) {
+            String first = s.substring(0, i);
+            if (isValidPart(first)) {
+                for (int j = 1; j < 4 && i + j < s.length(); j++) {
+                    String second = s.substring(i, i + j);
+                    if (isValidPart(second)) {
+                        for (int k = 1; k < 4 && i + j + k < s.length(); k++) {
+                            String third = s.substring(i + j, i + j + k);
+                            String fourth = s.substring(i + j + k);
+                            if (isValidPart(third) && isValidPart(fourth))
+                                result.add(first + "." + second + "." + third + "." + fourth);
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static boolean isValidPart(String s) {
+        if (s.length() > 3) return false;
+        if (s.startsWith("0") && s.length() > 1) return false;
+
+        int val = Integer.parseInt(s);
+        return val >= 0 && val <= 255;
+    }
+
     public static void main(String[] args) {
+        /*
         String b = "12345";
         int a = 38472034;
 
@@ -210,5 +286,17 @@ public class Ch6Strings {
         //System.out.println(isPalindrome("A man, a plan, a canal, Panama."));
         String input = "bob likes alice";
         System.out.println(reverseWords(input.toCharArray()));
+        */
+
+        /*
+        List<String> s = phoneMnemonic("2276696");
+
+        for (String a : s)
+            if (a.equals("ACRONYM"))
+                System.out.println("gotta");
+        */
+
+        System.out.println(lookAnySay(8));
+
     }
 }
