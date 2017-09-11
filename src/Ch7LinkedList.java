@@ -121,10 +121,14 @@ public class Ch7LinkedList {
         }
 
         return head1;
-
-
     }
 
+
+    public static void deletionFormList(ListNode<Integer> nodeToDelete) {
+        ListNode<Integer> nextNode = nodeToDelete.next;
+        nodeToDelete.data = nextNode.data;
+        nodeToDelete.next = nextNode.next;
+    }
 
     public static void main(String[] args) {
         List<Integer> test = Arrays.asList(1,2,3,4,5);

@@ -260,6 +260,93 @@ public class Ch6Strings {
         return val >= 0 && val <= 255;
     }
 
+
+    public static String snakeString(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < s.length(); i += 4)
+            sb.append(s.charAt(i));
+        for (int i = 0; i < s.length(); i += 2)
+            sb.append(s.charAt(i));
+        for (int i = 3; i < s.length(); i+= 4)
+            sb.append(s.charAt(i));
+        return sb.toString();
+    }
+
+    public static String encoding(String s) {
+       int i = 0, j = 1;
+       char tmp = s.charAt(i);
+       String result = "";
+
+       while(j < s.length()) {
+           if (s.charAt(j) != tmp) {
+               result += Integer.toString(j - i) + Character.toString(tmp);
+               tmp = s.charAt(j);
+               i = j;
+           }
+           j++;
+       }
+
+       result += Integer.toString(j - i) + Character.toString(tmp);
+       return result;
+    }
+
+    public static String encodingBook(String s) {
+        int count = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i <= s.length(); i++) {
+            if (i == s.length() || s.charAt(i) != s.charAt(i - 1)) {
+                sb.append(count);
+                sb.append(s.charAt(i));
+            } else
+                count++;
+        }
+        return sb.toString();
+    }
+
+    public static String decoding(String s) {
+        int count = 0;
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < s.length(); i++) {
+            char c  =s.charAt(i);
+            if (Character.isDigit(s.charAt(i)))
+                count += count * 10 + c - '0';
+            else {
+                while(count-- > 0)
+                    sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+
+    public static int rabinKarp(String text, String search)  {
+        if (search.length() > text.length()) return -1;
+
+        final int BASE = 26;
+
+        int tHash = 0, sHash = 0;
+        int powerS = 1;
+        for(int i = 0; i < search.length(); i++) {
+            powerS = i > 0 ? powerS * BASE : 1;
+            tHash = tHash * powerS + text.charAt(i);
+            sHash = sHash * powerS + search.charAt(i);
+        }
+
+        for (int i = search.length(); i < text.length(); i++) {
+            if (tHash == sHash && search.equals(text.substring(i - search.length(), i)))
+                return i - search.length();
+
+            tHash -= text.charAt(i-search.length())*powerS;
+            tHash = tHash*powerS + text.charAt(i);
+        }
+
+        if (tHash == sHash && search.equals(text.substring(text.length() - search.length(), text.length())))
+            return text.length() - search.length();
+
+        return -1;
+    }
+
     public static void main(String[] args) {
         /*
         String b = "12345";
@@ -295,7 +382,11 @@ public class Ch6Strings {
                 System.out.println("gotta");
         */
 
-        System.out.println(lookAnySay(8));
+        //System.out.println(lookAnySay(8));
+        System.out.println(encoding("eeeffffee"));
+        System.out.println(decoding(encoding("eeeffffee")));
+        String t = "this";
+        System.out.println(t.substring(t.length() - 1, t.length()));
 
     }
 }
