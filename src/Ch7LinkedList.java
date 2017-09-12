@@ -130,10 +130,204 @@ public class Ch7LinkedList {
         nodeToDelete.next = nextNode.next;
     }
 
+    public static ListNode<Integer> removeKthLast(ListNode<Integer> L, int k) {
+        ListNode<Integer> dummyHead = new ListNode<>(0, L);
+        ListNode<Integer> first = dummyHead;
+
+        while(k-- > 0)
+            first = first.next;
+
+        ListNode<Integer> second = dummyHead;
+        while(first != null) {
+            first = first.next;
+            second = second.next;
+        }
+
+        second.next = second.next.next; // deletion in action
+        return second;
+    }
+
+    public static ListNode<Integer> removeDuplicates(ListNode<Integer> L) {
+        ListNode<Integer> iter = L;
+
+        while(iter != null) {
+            if (iter.next != null && iter.data == iter.next.data)
+                iter.next = iter.next.next;
+            else {
+                iter = iter.next;
+            }
+        }
+        return L;
+    }
+
+    public static ListNode<Integer> cyclicRightShift(ListNode<Integer> L, int k) {
+        if (L == null)
+            return L;
+
+        ListNode<Integer> tail = L;
+        int n  = 1;
+        while(tail.next != null) {
+            n++;
+            tail = tail.next;
+        }
+
+        k %= n;
+        if (k == 0) return L;
+
+        tail.next = L.next;
+        int stepsToNewHead = n - k;
+        ListNode<Integer> newTail = tail;
+        while(stepsToNewHead-- > 0)
+            newTail = newTail.next;
+
+        ListNode<Integer> newHead = newTail.next;
+        newTail.next = null;
+
+        return newHead;
+    }
+
+    public static ListNode<Integer> evenOddMerge(ListNode<Integer> L) {
+        if (L == null) return L;
+        ListNode<Integer> even  = L.next;
+        ListNode<Integer> odd = even.next;
+        ListNode<Integer> evenIter = even;
+        ListNode<Integer> oddIter = odd;
+
+        while(evenIter.next != null && oddIter.next != null) {
+            if (evenIter.next != null && evenIter.next.next != null) {
+                evenIter.next = evenIter.next.next;
+                evenIter = evenIter.next;
+            }
+            if (oddIter.next != null && oddIter.next.next != null) {
+                oddIter.next = oddIter.next.next;
+                oddIter = oddIter.next;
+            }
+
+            System.out.println("even: " + evenIter.data + " odd: " + oddIter.data);
+        }
+
+        evenIter.next = odd;
+        oddIter.next = null;
+        return L;
+    }
+
+    public static ListNode<Integer> evenOddMergebook(ListNode<Integer> L) {
+        if (L == null) return L;
+
+        ListNode<Integer> evenDummy = new ListNode<>(0, null),
+                          oddDummy = new ListNode<>(0, null);
+
+        List<ListNode<Integer>> tails = Arrays.asList(evenDummy, oddDummy);
+        // this can be thought as java's version of tuple
+
+        int turn = 0;
+        for (ListNode<Integer> iter = L; iter != null; iter = iter.next) {
+            tails.get(turn).next = iter;
+            tails.set(turn, tails.get(turn).next);
+            turn = turn ^ 1;
+        }
+
+        tails.get(1).next = null;
+        tails.get(0).next = oddDummy.next;
+
+        return evenDummy.next;
+    }
+
+    public static boolean isLinkedListAPalindrome(ListNode<Integer> L) {
+        if (L == null) return false;
+
+        int len = 1;
+        ListNode<Integer> dum = L;
+        ListNode<Integer> iter = L;
+        for (ListNode<Integer> d = L; d.next != null; d = d.next, len++);
+
+        if(len == 1) return true;
+        if (len == 2) return L.data == L.next.data;
+        if (len == 3) return L.data == L.next.next.data;
+
+        len = len % 2 == 1? len / 2 + 1 : len / 2;
+        while(len-- > 1) iter = iter.next;
+
+        iter.next = reverseLinkedList(iter.next);
+
+        for (ListNode<Integer> see = L; see != null; see = see.next)
+            System.out.println(see.data);
+
+        ListNode<Integer> first = L;
+        iter = iter.next;
+        while(iter.next != null) {
+            if (first.data != iter.data) return false;
+
+            first = first.next;
+            iter = iter.next;
+        }
+
+        return true;
+    }
+
+    private static ListNode<Integer> reverseLinkedList(ListNode<Integer> L) {
+        ListNode<Integer> dummy = new ListNode<>(0, L); // sentinel node
+        ListNode<Integer> head = L;
+        while(head.next != null) {
+            ListNode<Integer> tmp = head.next;
+            head.next = tmp.next;
+            tmp.next = dummy.next;
+            dummy.next = tmp;
+        }
+
+        return dummy.next;
+    }
+
+
+    public static boolean isLikedListAPalindromeBook(ListNode<Integer> L) {
+        ListNode<Integer> slow = L, fast = L;
+
+        while(fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+
+        ListNode<Integer> first = L;
+        ListNode<Integer> second = reverseLinkedList(slow.next);
+
+        while(first != null && second != null) {
+            if (first.data != second.data)
+                return false;
+
+            first = first.next;
+            second = second.next;
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) {
+        /*
         List<Integer> test = Arrays.asList(1,2,3,4,5);
         List<Integer> test1 = new ArrayList<>();
         test1.add(5);
         System.out.println(test1);
+        */
+
+        ListNode<Integer> t = new ListNode<>(3, new ListNode<>(1,new ListNode<>(2,
+                new ListNode<>(1, new ListNode<>(3,null)))));
+        ListNode<Integer> L = new ListNode<>(-1, t);
+
+        /*
+        for (ListNode<Integer> dum = L; dum != null; dum = dum.next)
+            System.out.println(dum.data);
+            */
+
+        //ListNode<Integer> t1  = evenOddMerge(L);
+
+        /*
+        ListNode<Integer> t1  = evenOddMergebook(t);
+
+        for (ListNode<Integer> dum = t1; dum != null; dum = dum.next)
+            System.out.println(dum.data);
+        */
+
+        //System.out.println(isLinkedListAPalindrome(t));
+        System.out.println(isLikedListAPalindromeBook(t));
     }
 }
