@@ -301,6 +301,63 @@ public class Ch7LinkedList {
         return true;
     }
 
+    public static ListNode<Integer> listPivoting(ListNode<Integer> L, int x) {
+
+        // heads
+        ListNode<Integer> lessHead = new ListNode<>(0, null);
+        ListNode<Integer> equalHead = new ListNode<>(0, null);
+        ListNode<Integer> greaterHead = new ListNode<>(0, null);
+
+        // tails
+        ListNode<Integer> lessIter = lessHead;
+        ListNode<Integer> equalIter = equalHead;
+        ListNode<Integer> greaterIter = greaterHead;
+
+        ListNode<Integer> iter = L;
+
+        while(iter != null) {
+            if (iter.data < x) {
+                lessIter.next = iter;
+                lessIter = lessIter.next;
+            } else if (iter.data > x) {
+                greaterIter.next = iter;
+                greaterIter = greaterIter.next;
+            } else {
+                equalIter.next = iter;
+                equalIter = equalIter.next;
+            }
+
+            iter = iter.next;
+        }
+
+        lessIter.next = equalHead;
+        equalIter.next = greaterHead;
+        greaterIter.next = null;
+
+        return lessHead.next;
+    }
+
+
+    public static ListNode<Integer> addTwoNumbers (ListNode<Integer> L1, ListNode<Integer> L2) {
+        ListNode<Integer> dummyHead = new ListNode<>(0, null);
+        ListNode<Integer> placeIter = dummyHead;
+        int cin = 0;
+        while(L1 != null || L2 != null || cin != 0) {
+            int val = cin + (L1 != null? L1.data : 0) + (L2 != null? L2.data : 0); // very neat code
+            L1 = L1 != null ? L1.next : null;
+            L2 = L2 != null ? L2.next : null;
+
+            // delay this stages result to the next stage
+            // thus avoid the problem deciding if there're gonna be next stage
+            placeIter.next = new ListNode<>(val % 10, null);
+            cin = val / 10;
+            placeIter = placeIter.next;
+
+        }
+
+        return dummyHead.next;
+    }
+
     public static void main(String[] args) {
         /*
         List<Integer> test = Arrays.asList(1,2,3,4,5);
