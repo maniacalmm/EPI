@@ -1,7 +1,4 @@
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Ch8StaQue {
     // this is a queue example
@@ -267,10 +264,144 @@ public class Ch8StaQue {
         }
     }
 
+    // Basically, deque is great for both stack and queue
+    // is Linkedlist doubly linked in java?
+    // poll and remove only different in, if queue is empty, poll return null, and remove throw exception
 
+    public class QueueWithMaxIntro {
+        private Deque<Integer> data = new ArrayDeque<>();
+        public void enqueue (Integer x) {data.addLast(x);}
+        public Integer dequeue() {return data.removeFirst();}
+
+        public Integer max() {
+            if (!data.isEmpty())
+                return Collections.max(data); // n
+            throw new IllegalStateException("cannot performe max() on empty queue");
+        }
+    }
+
+    // Binary tree node
+    public class BinaryTreeNode<T> {
+        public T data;
+        public BinaryTreeNode<T> left, right;
+    }
+
+    //Queue question 1, BFS
+    public static List<List<Integer>> binaryTreeDepthOrder (BinaryTreeNode<Integer> tree) {
+        Queue<BinaryTreeNode<Integer>> currDepthNodes = new LinkedList<BinaryTreeNode<Integer>>();
+        currDepthNodes.add(tree);
+        List<List<Integer>> result = new ArrayList<>();
+
+        while(!currDepthNodes.isEmpty()) {
+            Queue<BinaryTreeNode<Integer>> nextDepthNodes = new LinkedList<BinaryTreeNode<Integer>>();
+            List<Integer> thisLevel = new ArrayList<>();
+            while(!currDepthNodes.isEmpty()) {
+                BinaryTreeNode<Integer> curr = currDepthNodes.poll();
+                if (curr != null) {
+                    thisLevel.add(curr.data);
+                    nextDepthNodes.add(curr.left);
+                    nextDepthNodes.add(curr.right);
+                }
+            }
+
+            if(!thisLevel.isEmpty()) result.add(thisLevel);
+            currDepthNodes = nextDepthNodes;
+        }
+
+        return result;
+    }
+    // identical to the above code
+    /*
+    public static List<List<Integer>> BFS (BinaryTreeNode<Integer> tree) {
+        Queue<BinaryTreeNode<Integer>> currDepthNode = new LinkedList<>();
+        currDepthNode.add(tree);
+        List<List<Integer>> result = new ArrayList<>();
+
+        while(!currDepthNode.isEmpty()) {
+            Queue<BinaryTreeNode<Integer>> nextDepthNode = new LinkedList<>();
+            List<Integer> thisLevel = new ArrayList<>();
+            while (!currDepthNode.isEmpty()) {
+                BinaryTreeNode<Integer> node = currDepthNode.poll();
+                if (node != null) {
+                    thisLevel.add(node.data);
+                    nextDepthNode.add(node.left);
+                    nextDepthNode.add(node.right);
+                }
+            }
+
+            if (!thisLevel.isEmpty()) result.add(thisLevel);
+            currDepthNode = nextDepthNode;
+        }
+
+        return result;
+    }
+    */
+
+
+    public static class CircleQueue {
+        private int head = 0, tail = 0, numQueueElements = 0;
+        private static final int SCALE_FACTOR = 2;
+        private Integer[] entries;
+
+        public CircleQueue (int cap) {entries = new Integer[cap];}
+
+        public void enqueue(Integer x) {
+            if (numQueueElements == entries.length) {
+                // API makes life such much easier
+                Collections.rotate(Arrays.asList(entries), -head);
+                head  = 0;
+                tail = numQueueElements;
+                entries = Arrays.copyOf(entries, numQueueElements * SCALE_FACTOR);
+            }
+
+            entries[tail] = x;
+            tail = (tail + 1) % entries.length;
+            numQueueElements++;
+        }
+
+        public Integer dequeue() {
+            if (numQueueElements != 0) {
+                numQueueElements--;
+                Integer ret = entries[head];
+                head = (head + 1) % entries.length;
+                return ret;
+            }
+
+            throw new NoSuchElementException("Dequeue called on an empty queue.");
+        }
+
+        public Integer size() {
+            return numQueueElements; // this is better, because just use head and tail can be a little tricky
+        }
+    }
+
+    public static class QueueUsingStack {
+        private Deque<Integer> enqueue = new ArrayDeque<>();
+        private Deque<Integer> dequeue = new ArrayDeque<>();
+
+        public void enqueue(Integer x) {enqueue.push(x);}
+
+        public Integer dequeue() {
+            Integer ret;
+            while(!enqueue.isEmpty()) dequeue.push(enqueue.pop());
+
+            if (!dequeue.isEmpty()) return dequeue.removeFirst();
+            throw new NoSuchElementException("cannot pop empty queue");
+        }
+    }
+
+
+    // Arrays.asList returns a wrapped version of the original arrays, of which mutation transfers.
     public static void main(String[] args) {
         String path = "sc//./../tc/awk/././";
         System.out.println(shortestEquivalentPath(path));
+
+        Integer[] example = new Integer[] {1,2,3,4,5};
+        for (int i : example) System.out.print(i + " ");
+        System.out.println();
+        Collections.rotate(Arrays.asList(example), 3);
+        for (int i : example) System.out.print(i + " ");
+        System.out.println();
     }
 
 
