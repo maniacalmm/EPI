@@ -1,13 +1,11 @@
 import javax.swing.tree.TreeNode;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 public class Ch9BinaryTree {
     public class BinaryTreeNode<T> {
         public T data;
         public BinaryTreeNode<T> left, right;
+        int size;
 
         public BinaryTreeNode(T data, BinaryTreeNode<T> left, BinaryTreeNode<T> right) {
             this.data = data;
@@ -183,7 +181,7 @@ public class Ch9BinaryTree {
     }
 
     // the mystery of writing DFS with iteration
-    public static List<Integer> BSTInSortedOrder(BinaryTreeNode<Integer> tree) {
+    public static List<Integer> InSortedOrder(BinaryTreeNode<Integer> tree) {
         Deque<BinaryTreeNode<Integer>> s = new ArrayDeque<>();
         BinaryTreeNode<Integer> curr = tree;
         List<Integer> result = new ArrayList<>();
@@ -224,6 +222,7 @@ public class Ch9BinaryTree {
     }
 
 
+    /*
     public static List<Integer> TraversalWithIteration(BinaryTreeNode<Integer> tree) {
         Deque<BinaryTreeNode<Integer>> path = new ArrayDeque<>();
 
@@ -246,6 +245,127 @@ public class Ch9BinaryTree {
 
         return inOrder;
     }
+    */
+
+    public static void postOrderIterative(BinaryTreeNode<Integer> tree) {
+        Deque<BinaryTreeNode<Integer>> s1 = new ArrayDeque<>();
+        Deque<BinaryTreeNode<Integer>> s2 = new ArrayDeque<>();
+
+        if (tree == null) return;
+
+        s1.push(tree);
+
+        while(!s1.isEmpty()) {
+            BinaryTreeNode<Integer> tmp = s1.pop();
+            s2.push(tmp);
+            if (tmp.left != null) s1.push(tmp.left);
+            if (tmp.right != null) s1.push(tmp.right);
+        }
+
+        while(!s2.isEmpty()) {
+            System.out.println(s2.pop().data);
+        }
+    }
+
+    public static void preOrderIterative(BinaryTreeNode<Integer> tree) {
+        if (tree == null) return;
+
+        Deque<BinaryTreeNode<Integer>> s = new ArrayDeque<>();
+        s.push(tree);
+
+        while(!s.isEmpty()) {
+            BinaryTreeNode<Integer> tmp = s.pop();
+            System.out.println(tmp.data);
+            if (tmp.right != null) s.push(tmp.right);
+            if (tmp.left != null) s.push(tmp.left);
+        }
+    }
+
+    public static BinaryTreeNode<Integer> findNthNodeBinaryTree(BinaryTreeNode<Integer> tree ,int k) {
+        BinaryTreeNode<Integer> iter = tree;
+        // assumption is inOrder traversal
+        while(iter != null) {
+            int leftSize = iter.left != null ? iter.left.size : 0;
+            if (leftSize + 1 < k) {
+                k -= (leftSize + 1);
+                iter = iter.right;
+            } else if (leftSize == k - 1) {
+                return iter;
+            } else {
+                iter = iter.left;
+            }
+        }
+
+        return null;
+    }
+
+    public static BinaryTree<Integer> findSuccessor(BinaryTree<Integer> node) {
+        BinaryTree<Integer> iter = node;
+        // if right branch is not empty;
+        if (iter.right != null) {
+            iter = iter.right;
+            while(iter.left != null) {
+                iter = iter.left;
+            }
+            return iter;
+        }
+
+        // going up
+        while(iter.parent != null && iter.parent.right == iter) {
+            iter = iter.parent;
+        }
+
+        return iter.parent; // which can be null if node is the rightmost node
+
+
+    }
+
+    public static List<Integer> inorderTraversalWithO1(BinaryTree<Integer> tree) {
+        BinaryTree<Integer> prev = null, curr = tree;
+        List<Integer> result = new ArrayList<>();
+
+        while(curr != null) {
+            BinaryTree<Integer> next; // where to go next?
+            if (curr.parent == prev) {
+                if (curr.left != null) {
+                    next = curr.left;
+                } else {
+                    result.add(curr.data);
+                    next = (curr.right != null) ? curr.right : curr.parent;
+                }
+            } else if (curr.left == prev) {
+                result.add(curr.data);
+                next = (curr.right != null) ? curr.right : curr.parent;
+            } else {
+                next = curr.parent;
+            }
+
+            prev = curr;
+            curr = next;
+        }
+
+        return result;
+    }
+
+    public static List<BinaryTreeNode<Integer>> createListOfLeaves(BinaryTreeNode<Integer> tree) {
+        List<BinaryTreeNode<Integer>> leaves = new LinkedList<>();
+        addLeavesLeftToRight(tree, leaves);
+        return leaves;
+    }
+
+    private static void addLeavesLeftToRight(BinaryTreeNode<Integer> tree, List<BinaryTreeNode<Integer>> leaves) {
+        if (tree != null) {
+            if (tree.left == null && tree.right == null) {
+                leaves.add(tree);
+            } else {
+               addLeavesLeftToRight(tree.left, leaves);
+               addLeavesLeftToRight(tree.right, leaves);
+            }
+        }
+    }
+
+
+
 
 
 
