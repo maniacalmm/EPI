@@ -2,10 +2,11 @@ import javax.swing.tree.TreeNode;
 import java.util.*;
 
 public class Ch9BinaryTree {
-    public class BinaryTreeNode<T> {
+    public static class BinaryTreeNode<T> {
         public T data;
         public BinaryTreeNode<T> left, right;
         int size;
+        BinaryTreeNode<T> next;
 
         public BinaryTreeNode(T data, BinaryTreeNode<T> left, BinaryTreeNode<T> right) {
             this.data = data;
@@ -327,13 +328,13 @@ public class Ch9BinaryTree {
         while(curr != null) {
             BinaryTree<Integer> next; // where to go next?
             if (curr.parent == prev) {
-                if (curr.left != null) {
+                if (curr.left != null) { // keep going left
                     next = curr.left;
                 } else {
                     result.add(curr.data);
-                    next = (curr.right != null) ? curr.right : curr.parent;
+                    next = (curr.right != null) ? curr.right : curr.parent; // when curr.left == null
                 }
-            } else if (curr.left == prev) {
+            } else if (curr.left == prev) { // hitting the left most node, and bounce up to parent, prev is curr.left
                 result.add(curr.data);
                 next = (curr.right != null) ? curr.right : curr.parent;
             } else {
@@ -345,6 +346,57 @@ public class Ch9BinaryTree {
         }
 
         return result;
+    }
+
+    // THIS ONE IS HARD
+    public static BinaryTreeNode<Integer> binaryTreeFromPreorderInorder(List<Integer> preorder,
+                                                                        List<Integer> inorder) {
+        Map<Integer, Integer> nodeToInorderIdx = new HashMap<>();
+
+        for (int i = 0; i < inorder.size(); i++) nodeToInorderIdx.put(inorder.get(i), i);
+
+        return binaryTreeFromPreorderInorderHelper(
+                preorder, 0, preorder.size(), 0, inorder.size(), nodeToInorderIdx
+        );
+    }
+
+    private static BinaryTreeNode<Integer> binaryTreeFromPreorderInorderHelper (
+            List<Integer> preorder, int preorderStart, int preorderEnd,
+            int inorderStart, int inorderEnd,
+            Map<Integer, Integer> nodeToInorderIdx) {
+        if (preorderEnd <= preorderStart || inorderEnd <= inorderStart) return null;
+
+        int rootInorderIdx = nodeToInorderIdx.get(preorder.get(preorderStart));// to get root position in Inorder
+        int leftSubtreeSize = rootInorderIdx - inorderStart;
+
+        return new BinaryTreeNode<>(
+                preorder.get(preorderStart),
+                binaryTreeFromPreorderInorderHelper(
+                        preorder, preorderStart + 1, preorderStart + 1  + leftSubtreeSize,
+                        inorderStart, rootInorderIdx, nodeToInorderIdx),
+                binaryTreeFromPreorderInorderHelper(
+                        preorder, preorderStart + 1 + leftSubtreeSize, preorderEnd,
+                        rootInorderIdx + 1, inorderEnd, nodeToInorderIdx));
+
+    }
+
+    private static Integer subtreeIdx;
+
+    public static BinaryTreeNode<Integer> reconstructPreorder (List<Integer> preorder) {
+        subtreeIdx = 0;
+        return reconstructPreorderSubtree(preorder);
+    }
+
+    private static BinaryTreeNode<Integer> reconstructPreorderSubtree (List<Integer> preorder) {
+        Integer subtreeKey = preorder.get(subtreeIdx);
+        subtreeIdx++;
+        if (subtreeKey == null) return null;
+
+        // really depends on the symmetry of the whole structures
+        BinaryTreeNode<Integer> leftSubtree = reconstructPreorderSubtree(preorder);
+        BinaryTreeNode<Integer> rightSubtree = reconstructPreorderSubtree(preorder);
+
+        return new BinaryTreeNode<>(subtreeKey, leftSubtree, rightSubtree);
     }
 
     public static List<BinaryTreeNode<Integer>> createListOfLeaves(BinaryTreeNode<Integer> tree) {
@@ -361,6 +413,25 @@ public class Ch9BinaryTree {
                addLeavesLeftToRight(tree.left, leaves);
                addLeavesLeftToRight(tree.right, leaves);
             }
+        }
+    }
+
+    public static void constructRightSibling(BinaryTreeNode<Integer> tree) {
+        BinaryTreeNode<Integer> leftStart = tree;
+        while(leftStart != null && leftStart.left != null) {
+            populateLowerLevelnextField(leftStart);
+            leftStart = leftStart.left;
+        }
+    }
+
+    private static void populateLowerLevelnextField(BinaryTreeNode<Integer> startNode) {
+        BinaryTreeNode<Integer> iter = startNode;
+        while(iter != null) {
+            iter.left.next = iter.right;
+
+            if (iter.next != null) iter.right.next = iter.next.left;
+
+            iter = iter.next;
         }
     }
 
