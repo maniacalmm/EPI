@@ -212,7 +212,7 @@ public class Ch10Heaps {
     public static class Compare1 implements Comparator<ValueWithRank> {
         @Override
         public int compare(ValueWithRank o1, ValueWithRank o2) {
-            Integer.compare(o2.rank, o1.rank); // this is the reverse maxHeap order
+            return Integer.compare(o2.rank, o1.rank); // this is the reverse maxHeap order
         }
 
         public static final Compare1 COMPARE_VALUEWITHRANK = new Compare1();
