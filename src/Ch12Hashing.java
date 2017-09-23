@@ -201,6 +201,108 @@ public class Ch12Hashing {
         return result;
     }
 
+    public static int findNearestRepetition(List<String> paragrah) {
+        Map<String, Integer> record = new HashMap<>();
+
+        int idx = 0;
+        int err = Integer.MAX_VALUE; // signed number
+        for (String s : paragrah) {
+            if (record.containsKey(s)) {
+                if (idx - record.get(s) < err) err = idx - record.get(s);
+            }
+            record.put(s, idx++);
+        }
+
+        return err;
+    }
+
+    public static class Subarray {
+        public Integer start;
+        public Integer end;
+
+        public Subarray(Integer start, Integer end) {
+            this.start = start;
+            this.end = end;
+        }
+    }
+
+    public static Subarray findSmallestSubarrayCoveringSet(List<String> paragrah, Set<String> keywords) {
+        // Implementation is a little tricky to follow, or maybe my energy level is just running low now...
+        Map<String, Integer> keywordToCover = new HashMap<>();
+        for (String keyword : keywords) {
+            keywordToCover.put(keyword, keywordToCover.containsKey(keyword)?
+                                        keywordToCover.get(keyword) + 1 : 1);
+            // a set of keywords, every keyword should be distinctive, thus i'm not sure why they have that ? clause
+        }
+
+        Subarray result = new Subarray(-1, -1);
+
+        int reminingToCover = keywords.size();
+        // find the first subarray that covers all of the keywords
+        for (int left = 0, right = 0; right < paragrah.size(); right++) {
+            Integer keywordCount = keywordToCover.get(paragrah.get(right));
+            if (keywordCount != null) {
+                keywordToCover.put(paragrah.get(right), --keywordCount);
+                if (keywordCount >= 0)
+                    --reminingToCover;
+            }
+
+
+            while(reminingToCover == 0) {
+                if ((result.start == -1 && result.end == -1) || right - left < result.end - result.start) {
+                    result.start = left;
+                    result.end = right;
+                }
+
+                keywordCount = keywordToCover.get(paragrah.get(left));
+
+                if(keywordCount != null) {
+                    keywordToCover.put(paragrah.get(left), ++keywordCount);
+                    if (keywordCount >= 0) {
+                        ++reminingToCover; // because we are going to left++, thus, leaving the covered range
+                    }
+                }
+
+                left++;
+            }
+
+        }
+
+        return result;
+
+    }
+
+
+    public static int longestContainedRange(List<Integer> A) {
+        Set<Integer> unprocessedEntries = new HashSet<>(A); // nice trick
+
+        int maxIntervalSize = 0;
+        while(!unprocessedEntries.isEmpty()) {
+
+            // this is another trick
+            // we are iterative while updating at the same time
+            int a = unprocessedEntries.iterator().next();
+
+            unprocessedEntries.remove(a);
+
+            int lowerBound = a - 1;
+            while(unprocessedEntries.contains(lowerBound)) {
+                unprocessedEntries.remove(lowerBound);
+                lowerBound--;
+            }
+
+            int upperBound = a + 1;
+            while (unprocessedEntries.contains(upperBound)) {
+                unprocessedEntries.remove(upperBound);
+                upperBound++;
+            }
+            int err = upperBound - lowerBound - 1;
+            maxIntervalSize = err > maxIntervalSize ? err : maxIntervalSize;
+        }
+
+        return maxIntervalSize;
+    }
+
 
 
 
@@ -212,8 +314,16 @@ public class Ch12Hashing {
         System.out.println(haha.remove(0));
         */
 
+        /*
         List<String> test = Arrays.asList("a", "b", "c", "d", "a", "b","a", "e", "e");
         System.out.println(kMostFrequent(test, 3));
+        */
+
+
+        List<String> test = Arrays.asList("All", "work", "and", "no", "play", "makes","for", "no", "work",
+                                            "no", "fun", "and", "no", "result");
+
+        System.out.println(findNearestRepetition(test));
     }
 
 }
