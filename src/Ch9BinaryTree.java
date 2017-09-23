@@ -111,7 +111,7 @@ public class Ch9BinaryTree {
     }
 
     // tree with parent field
-    private class BinaryTree<T> {
+    public static class BinaryTree<T> {
         int data;
         BinaryTree<T> parent;
         BinaryTree<T> left, right;

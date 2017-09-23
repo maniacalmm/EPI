@@ -225,6 +225,96 @@ public class Ch11Searching {
     }
 
 
+    private static class Compare {
+        private static class GreaterThan implements Comparator<Integer> {
+            public int compare(Integer a, Integer b) {
+                return (a > b) ? -1 : ((a < b) ? 1 : 0); // reverse sorting, biggest one first, so the kth largest is at k - 1
+            }
+        }
+
+        public static final GreaterThan GREATER_THAN = new GreaterThan();
+    }
+
+    public static int findKthLargest(List<Integer> A, int k, Comparator<Integer> cmp) {
+        int left = 0, right = A.size() - 1;
+        Random r = new Random(0);
+
+        while(left <= right) {
+            int pivotIdx = r.nextInt(right - left + 1) + left;
+            int newPivotIdx = partitionAroundPivot(left, right, pivotIdx, A, cmp);
+            if (newPivotIdx == k - 1) {
+                return A.get(newPivotIdx); // this will always return before left > right
+            } else if (newPivotIdx > k - 1) {
+                right = newPivotIdx - 1;
+            } else {
+                left = newPivotIdx + 1;
+            }
+        }
+
+        return left; // ????
+    }
+
+    private static int partitionAroundPivot(int left, int right, int pivotIdx,
+                                            List<Integer> A, Comparator<Integer> cmp) {
+        int pivotValue = A.get(pivotIdx);
+        int newPivotIdx = left;
+
+        Collections.swap(A, pivotIdx, right);
+        for (int i = left; i < right; i++) {
+            if (cmp.compare(A.get(i), pivotValue) < 0)
+                Collections.swap(A, i, newPivotIdx++);
+        }
+
+        Collections.swap(A, right, newPivotIdx);
+        return newPivotIdx;
+    }
+
+    private static void partitionPractice(List<Integer> A) {
+        // pivot point is 0;
+        int left = 0, right = A.size() - 1;
+        int pivotPoint = 0;
+        int pivotValue  = A.get(pivotPoint);
+        int newPivotIdx = left;
+
+        Collections.swap(A, right, newPivotIdx);
+
+        for (int i = left; i < right; i++) {
+            if (A.get(i) > pivotValue) Collections.swap(A, i, newPivotIdx++);
+        }
+
+        Collections.swap(A, right, newPivotIdx);
+        System.out.println(A);
+
+    }
+
+    /*
+    private static void partitionSegWick(List<Integer> A) {
+        int left = 1, right = A.size() - 1;
+        int pV = A.get(0);
+        while(left < right) {
+            while (A.get(left) < pV) left++;
+            while (A.get(right) > pV) right--;
+            Collections.swap(A, left, right);
+        }
+
+        Collections.swap(A, 0, right);
+
+        System.out.println(A);
+    }
+*/
+
+    private static final int NUM_BUCKET = 1 << 16;
+
+    public static int findMissingElement(Iterable<Integer> sequence) {
+        int[] counter = new int[NUM_BUCKET];
+        Iterator<Integer> s = sequence.iterator();
+        while(s.hasNext()) {
+            int idx = s.next() >>> 16;
+            counter[idx]++;
+        }
+        return 1;
+    }
+
     public static void main(String[] args) {
         List<Integer> a = new ArrayList<>(Arrays.asList(-14,-10,2,108,108,243,285,285,285,401));
         /*
@@ -234,7 +324,10 @@ public class Ch11Searching {
         */
 
         //System.out.println(squareRoot(1776786527.0));
-        System.out.println(division(52,13));
+        //System.out.println(division(52,13));
+        List<Integer> b = Arrays.asList(6, 8, 4, 1, 3, 5);
+        //partitionPractice(b);
+        //partitionSegWick(b);
 
     }
 }

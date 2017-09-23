@@ -485,6 +485,24 @@ public class Ch5Arrays {
 
     }
 
+    public static void arrayRotateRight(List<Integer> a, int k) {
+       int kk = k % a.size();
+       if (kk == 0) return;
+
+       for (int j = 0; j < kk; j++) {
+           int prev = 0;
+           int tmp = a.get(prev);
+           for (int i = 0; i < a.size(); i++) {
+               int curr = (prev + 1) % a.size();
+               System.out.println(prev + " -> " + curr + " tmp: " + tmp);
+               int tmpC = a.get(curr);
+               a.set(curr, tmp);
+               tmp = tmpC;
+               prev = curr;
+           }
+       }
+       System.out.println(a);
+    }
 
 
     /***************************************************/
@@ -529,6 +547,7 @@ public class Ch5Arrays {
             System.out.println(l.toString());
         }
         */
+        /*
 
         List<List<Integer>> list = Arrays.asList(
                 Arrays.asList(1,2,3,4),
@@ -544,7 +563,10 @@ public class Ch5Arrays {
 
         System.out.println(spiralOrder(list).toString());
         System.out.println(spiralOrder(list1).toString());
+        */
 
+        List<Integer> a = Arrays.asList(1,2,3,4,5,6);
+        arrayRotateRight(a, 3);
 
     }
 

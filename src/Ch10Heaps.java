@@ -137,6 +137,7 @@ public class Ch10Heaps {
 
     private static final int DEFAULT_INITIAL_CAPACITY = 16;
     public static void onlineMedian(Iterator<Integer> sequence) {
+        // this one is actually supper cool
         PriorityQueue<Integer> maxHeap = new PriorityQueue<>(DEFAULT_INITIAL_CAPACITY,Collections.reverseOrder());
         PriorityQueue<Integer> minHeap = new PriorityQueue<>(DEFAULT_INITIAL_CAPACITY);
 
