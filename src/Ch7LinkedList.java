@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class Ch7LinkedList {
@@ -356,6 +357,13 @@ public class Ch7LinkedList {
         }
 
         return dummyHead.next;
+    }
+
+    public class nodeCompare implements Comparator<ListNode<Integer>> {
+        @Override
+        public int compare(ListNode<Integer> o1, ListNode<Integer> o2) {
+            return Integer.compare(o1.data, o2.data);
+        }
     }
 
     public static void main(String[] args) {
